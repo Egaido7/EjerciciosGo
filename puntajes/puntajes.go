@@ -45,51 +45,29 @@ func main() {
 }
 
 func contar(myMap map[int]int) {
-	contador1 := 0
-	contador2 := 0
-	contador3 := 0
-	contador4 := 0
-	contador5 := 0
-	for _, v := range myMap {
-		if v == 1 {
-			contador1++
-		} else if v == 2 {
-			contador2++
-		} else if v == 3 {
-			contador3++
-		} else if v == 4 {
-			contador4++
-		} else if v == 5 {
-			contador5++
-		} else {
-			color.Red(fmt.Sprintf("Valor ingresado incorrecto: %v", v))
-		}
-
-	}
 	fmt.Println("El contador de las opciones es:")
-	fmt.Println("1==>", contador1)
-	fmt.Println("2==>", contador2)
-	fmt.Println("3==>", contador3)
-	fmt.Println("4==>", contador4)
-	fmt.Println("5==>", contador5)
+	for opcion, cantidad := range myMap {
+		color.Red("Opción %d => %d votos\n", opcion, cantidad)
+	}
 }
 
 func mostrarMensaje(myMap map[int]int) {
 	contadorpositivo := 0
 	contadornegativo := 0
-	for _, v := range myMap {
-		if v >= 4 {
-			contadorpositivo++
-		} else if v <= 2 {
-			contadornegativo++
+
+	for opcion, cantidad := range myMap {
+		if opcion >= 4 {
+			contadorpositivo += cantidad
+		} else if opcion <= 2 {
+			contadornegativo += cantidad
 		}
 	}
+
 	fmt.Println("---------------------------------------")
 	if contadorpositivo > contadornegativo {
 		color.Green("¡Buen resultado!")
 	} else if contadorpositivo < contadornegativo {
 		color.Red("Resultado mejorable")
-
 	} else {
 		color.Yellow("Resultado neutro")
 	}
