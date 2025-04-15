@@ -44,7 +44,7 @@ func (d *Dispositivo) apagar() error {
 		return nil
 	} else {
 		//color.Yellow("%s ya está apagado.", d.nombre)
-		return errors.New("el dispositivo ya está encendido")
+		return errors.New("el dispositivo ya está apagado")
 	}
 }
 
