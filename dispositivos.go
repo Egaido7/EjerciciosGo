@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -22,25 +23,28 @@ type Dispositivo struct {
 	estado bool
 }
 
-func (d *Dispositivo) encender() bool {
-	if d.estado == false {
+func (d *Dispositivo) encender() error { //resever
+	//Minuscula privado; Mayuscula publico
+	//estoy usando el puntero de dispositivo
+	if !d.estado {
 		d.estado = true
 		color.Green("Encendiendo %s...", d.nombre)
-		return true
+		return nil
 	} else {
-		color.Yellow("%s ya está encendido.", d.nombre)
-		return false
+		//color.Yellow("%s ya está encendido.", d.nombre)
+		//return fmt.Errorf("el dispositivo %s ya está encendido.", d.nombre)
+		return errors.New("el dispositivo ya está encendido")
 	}
 }
 
-func (d *Dispositivo) apagar() bool {
-	if d.estado == true {
+func (d *Dispositivo) apagar() error {
+	if d.estado {
 		d.estado = false
 		color.Green("Apagando %s...", d.nombre)
-		return true
+		return nil
 	} else {
-		color.Yellow("%s ya está apagado.", d.nombre)
-		return false
+		//color.Yellow("%s ya está apagado.", d.nombre)
+		return errors.New("el dispositivo ya está encendido")
 	}
 }
 
@@ -51,9 +55,9 @@ func (d *Dispositivo) Estadoactual() string {
 	return "apagado"
 }
 
-func ingresarDispositivo() (Dispositivo, error) {
+func ingresarDispositivo() (*Dispositivo, error) {
 	reader := bufio.NewReader(os.Stdin)
-	dispositivo := Dispositivo{}
+	dispositivo := &Dispositivo{}
 
 	fmt.Print("Introduce el nombre del dispositivo: ")
 	nombre, err := reader.ReadString('\n')
@@ -72,7 +76,7 @@ func visualizarDispositivo(d Dispositivo) {
 	fmt.Println("-----------------------------")
 }
 
-func listarDispositivos(dispositivos []Dispositivo) {
+func listarDispositivos(dispositivos []*Dispositivo) {
 	if len(dispositivos) == 0 {
 		color.Red("No hay dispositivos cargados.")
 		return
@@ -82,7 +86,7 @@ func listarDispositivos(dispositivos []Dispositivo) {
 	}
 }
 
-func seleccionarDispositivo(dispositivos []Dispositivo) int {
+func seleccionarDispositivo(dispositivos []*Dispositivo) int {
 	listarDispositivos(dispositivos)
 	if len(dispositivos) == 0 {
 		return -1
@@ -101,7 +105,7 @@ func seleccionarDispositivo(dispositivos []Dispositivo) int {
 }
 
 func main() {
-	var dispositivos []Dispositivo
+	var dispositivos []*Dispositivo
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -130,12 +134,16 @@ func main() {
 		case "3":
 			indice := seleccionarDispositivo(dispositivos)
 			if indice != -1 {
-				dispositivos[indice].encender()
+				if err := dispositivos[indice].encender(); err != nil {
+					color.Yellow("Aviso: %v", err)
+				}
 			}
 		case "4":
 			indice := seleccionarDispositivo(dispositivos)
 			if indice != -1 {
-				dispositivos[indice].apagar()
+				if err := dispositivos[indice].apagar(); err != nil {
+					color.Yellow("Aviso: %v", err)
+				}
 			}
 		case "5":
 			color.Blue("¡Hasta luego!")
